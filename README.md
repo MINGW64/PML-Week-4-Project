@@ -69,3 +69,16 @@ Resampling results across tuning parameters:
 Accuracy was used to select the optimal model using  the largest value.
 The final value used for the model was mtry = 30. 
 ```
+####Step 6. Prediction
+```
+pred_test = predict(rf_result, newdata = dat_test3)
+print(pred_test)
+```
+
+###Notes
+
+#### Why Random Forest?
+RF has desired property of convenience in data processing and manipulation. It is robust to extreme values and outliers, naturally handle missing values, capable for categorical variables without dummy coding, etc...
+
+#### How to do cross validation?
+CV is done by the 
