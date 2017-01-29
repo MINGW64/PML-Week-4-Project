@@ -19,6 +19,7 @@ library(caret)
 library(rpart)
 library(rattle)
 library(rpart.plot)
+library(ranger)
 set.seed(123)
 ```
 
@@ -37,42 +38,67 @@ dat_test2 = dat_test1[, MissingInd==FALSE]
 dat_train3 = dat_train2[, -c(1, 3:5)]
 dat_test3 = dat_test2[, -c(1, 3:5)]
 ```
-####Step 4. Build Random Forest model
+####Step 4. Tune RF using fast RF package Ranger
 ```
-#Build RF model
-control=trainControl(method="CV", number=5)
+#tune RF model
 
-rf_result = train(classe~., data=dat_train3, method ="rf", allowParallel=TRUE)
+rf_result5 = ranger(classe~., data=dat_train3, num.trees=500, replace = FALSE , mtry=5)
+rf_result5
+rf_result7 = ranger(classe~., data=dat_train3, num.trees=500, replace = FALSE , mtry=7)
+rf_result7
+rf_result9 = ranger(classe~., data=dat_train3, num.trees=500, replace = FALSE , mtry=9)
+rf_result9
+rf_result11 = ranger(classe~., data=dat_train3, num.trees=500, replace = FALSE , mtry=11)
+rf_result11
+rf_result13 = ranger(classe~., data=dat_train3, num.trees=500, replace = FALSE , mtry=13)
+rf_result13
+rf_result15 = ranger(classe~., data=dat_train3, num.trees=500, replace = FALSE , mtry=15)
+rf_result15
+rf_result17 = ranger(classe~., data=dat_train3, num.trees=500, replace = FALSE , mtry=17)
+rf_result17
+rf_result19 = ranger(classe~., data=dat_train3, num.trees=500, replace = FALSE , mtry=19)
+rf_result19
+rf_result21 = ranger(classe~., data=dat_train3, num.trees=500, replace = FALSE , mtry=21)
+rf_result21
 ```
-####Step 5. Cross Validation Performance Check
+####Step 5. Select the best one by the lowest OOB error
 ```
-print(rf_result)
+print(rf_result15)
+rf_result15$confusion.matrix
 ```
 
 ```
-Random Forest 
+Ranger result
 
-19622 samples
-   54 predictor
-    5 classes: 'A', 'B', 'C', 'D', 'E' 
+Call:
+ ranger(classe ~ ., data = dat_train3, num.trees = 500, replace = FALSE,      mtry = 15) 
 
-No pre-processing
-Resampling: Bootstrapped (25 reps) 
-Summary of sample sizes: 19622, 19622, 19622, 19622, 19622, 19622, ... 
-Resampling results across tuning parameters:
+Type:                             Classification 
+Number of trees:                  500 
+Sample size:                      19622 
+Number of independent variables:  54 
+Mtry:                             15 
+Target node size:                 1 
+Variable importance mode:         none 
+OOB prediction error:             0.10 % 
 
-  mtry  Accuracy   Kappa    
-   2    0.9942232  0.9926930
-  30    0.9973699  0.9966735
-  58    0.9943490  0.9928525
-
-Accuracy was used to select the optimal model using  the largest value.
-The final value used for the model was mtry = 30. 
+    predicted
+true    A    B    C    D    E
+   A 5579    0    0    0    1
+   B    1 3795    1    0    0
+   C    0    5 3417    0    0
+   D    0    0    9 3206    1
+   E    0    0    0    2 3605
 ```
 ####Step 6. Prediction
 ```
-pred_test = predict(rf_result, newdata = dat_test3)
-print(pred_test)
+#prediction
+pred_test=predict(rf_result15, data = dat_test3)
+pred_test$predictions
+```
+```
+ [1] B A B A A E D B A A B C B A E E A B B B
+Levels: A B C D E
 ```
 
 ###Notes
@@ -81,4 +107,4 @@ print(pred_test)
 RF has desired property of convenience in data processing and manipulation. It is robust to extreme values and outliers, naturally handle missing values, capable for categorical variables without dummy coding, etc...
 
 #### How to do cross validation?
-CV is done by the 
+CV is not necessary in RF model since OOB error can be used. More specifically, the parameter REPLACE=FALSE is specified to sample data without replacement. In such case OOB errors are more close to generalized error.
