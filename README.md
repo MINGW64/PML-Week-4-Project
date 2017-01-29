@@ -37,3 +37,35 @@ dat_test2 = dat_test1[, MissingInd==FALSE]
 dat_train3 = dat_train2[, -c(1, 3:5)]
 dat_test3 = dat_test2[, -c(1, 3:5)]
 ```
+####Step 4. Build Random Forest model
+```
+#Build RF model
+control=trainControl(method="CV", number=5)
+
+rf_result = train(classe~., data=dat_train3, method ="rf", allowParallel=TRUE)
+```
+####Step 5. Cross Validation Performance Check
+```
+print(rf_result)
+```
+
+```
+Random Forest 
+
+19622 samples
+   54 predictor
+    5 classes: 'A', 'B', 'C', 'D', 'E' 
+
+No pre-processing
+Resampling: Bootstrapped (25 reps) 
+Summary of sample sizes: 19622, 19622, 19622, 19622, 19622, 19622, ... 
+Resampling results across tuning parameters:
+
+  mtry  Accuracy   Kappa    
+   2    0.9942232  0.9926930
+  30    0.9973699  0.9966735
+  58    0.9943490  0.9928525
+
+Accuracy was used to select the optimal model using  the largest value.
+The final value used for the model was mtry = 30. 
+```
